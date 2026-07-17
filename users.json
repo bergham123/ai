@@ -1,0 +1,16 @@
+{
+  "admin": {
+    "password": "admin123",
+    "apikey": "sk-1234567890abcdef",
+    "createdAt": "2026-07-17T18:00:00.000Z",
+    "dailyCount": 0,
+    "lastResetDate": "2026-07-17"
+  },
+  "test": {
+    "password": "test123",
+    "apikey": "sk-fedcba0987654321",
+    "createdAt": "2026-07-17T18:00:00.000Z",
+    "dailyCount": 0,
+    "lastResetDate": "2026-07-17"
+  }
+}
