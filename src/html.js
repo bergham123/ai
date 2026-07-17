@@ -401,12 +401,13 @@ function renderMessages() {
     chatContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 40px; align-self: center;"><i class="fas fa-comment-dots" style="font-size: 32px; display: block; margin-bottom: 12px;"></i>لا توجد رسائل. ابدأ المحادثة!</div>';
     return;
   }
+  // استخدام map مع تعريف isUser داخل كل تكرار
   chatContainer.innerHTML = state.messages.map(msg => {
-    const isUser = msg.role === 'user';
-    return \`< div class="message ${isUser ? 'user' : 'assistant'}" >
-    <span class="role-badge">${isUser ? '🧑 أنت' : '🤖 المساعد'}</span>
-      ${msg.content}
-    </div > \`;
+    const isUser = (msg.role === 'user');
+    return '<div class="message ' + (isUser ? 'user' : 'assistant') + '">' +
+      '<span class="role-badge">' + (isUser ? '🧑 أنت' : '🤖 المساعد') + '</span>' +
+      msg.content +
+      '</div>';
   }).join('');
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
@@ -417,7 +418,7 @@ async function loadModels() {
     const res = await fetch('/api/models');
     const data = await res.json();
     if (data.ok) {
-      modelSelect.innerHTML = data.models.map(m => \`< option value = "${m}" > ${m}</option > \`).join('');
+      modelSelect.innerHTML = data.models.map(m => '<option value="' + m + '">' + m + '</option>').join('');
       if (data.models.length > 0) state.model = data.models[0];
     }
   } catch (e) { console.error('Models load error', e); }
@@ -434,25 +435,25 @@ async function loadConversations() {
         conversationList.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 20px; font-size: 14px;">لا توجد محادثات. ابدأ محادثة جديدة!</div>';
         return;
       }
-      conversationList.innerHTML = data.conversations.map(conv => \`
-    < div class="conv-item" data - id="${conv.id}" >
-          <span>${conv.id.replace('conv_', '').slice(0, 12)}</span>
-          <button class="del-btn" data-id="${conv.id}"><i class="fas fa-trash"></i></button>
-        </div >
-    \`).join('');
+      conversationList.innerHTML = data.conversations.map(conv => {
+        return '<div class="conv-item" data-id="' + conv.id + '">' +
+          '<span>' + conv.id.replace('conv_', '').slice(0, 12) + '</span>' +
+          '<button class="del-btn" data-id="' + conv.id + '"><i class="fas fa-trash"></i></button>' +
+          '</div>';
+      }).join('');
 
       // إضافة مستمعات النقر
       document.querySelectorAll('.conv-item').forEach(el => {
-        el.addEventListener('click', (e) => {
+        el.addEventListener('click', function(e) {
           if (e.target.closest('.del-btn')) return;
-          const id = el.dataset.id;
+          const id = this.dataset.id;
           loadConversation(id);
         });
         const delBtn = el.querySelector('.del-btn');
         if (delBtn) {
-          delBtn.addEventListener('click', async (e) => {
+          delBtn.addEventListener('click', async function(e) {
             e.stopPropagation();
-            const id = delBtn.dataset.id;
+            const id = this.dataset.id;
             if (!confirm('حذف هذه المحادثة؟')) return;
             try {
               const res = await fetch('/api/conversation/' + id, { method: 'DELETE', headers: { 'Authorization': getAuthHeader() } });
@@ -486,7 +487,7 @@ async function loadConversation(id) {
       renderMessages();
       // تمييز العنصر النشط
       document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
-      const activeEl = document.querySelector(\`.conv-item[data-id="\${id}"]\`);
+      const activeEl = document.querySelector('.conv-item[data-id="' + id + '"]');
       if (activeEl) activeEl.classList.add('active');
       setStatus('تم تحميل المحادثة', 'success');
     } else {
@@ -514,7 +515,7 @@ async function sendMessage() {
   try {
     const payload = {
       model: state.model,
-      messages: state.messages.filter(m => m.role !== 'system'), // نرسل فقط user/assistant
+      messages: state.messages.filter(m => m.role !== 'system'),
       conversation_id: state.currentConversationId || undefined
     };
 
@@ -529,18 +530,15 @@ async function sendMessage() {
 
     const data = await res.json();
     if (data.ok) {
-      // تحديث معرف المحادثة إذا كان جديداً
       if (data.conversation_id && !state.currentConversationId) {
         state.currentConversationId = data.conversation_id;
-        loadConversations(); // تحديث القائمة الجانبية
+        loadConversations();
       }
-      // إضافة رد المساعد
       state.messages.push({ role: 'assistant', content: data.message.content });
       renderMessages();
       setStatus('تم الإرسال ✓', 'success');
     } else {
       setStatus('خطأ: ' + data.error, 'error');
-      // إزالة رسالة المستخدم إذا فشلت (أو تركها)
     }
   } catch (err) {
     setStatus('خطأ: ' + err.message, 'error');
@@ -570,7 +568,6 @@ async function login() {
       setStatus('مرحباً ' + data.username, 'success');
       loadConversations();
       loadModels();
-      // تحميل الـ Prompt
       loadPrompt();
     } else {
       setStatus('خطأ: ' + data.error, 'error');
@@ -630,9 +627,8 @@ function updateUIAfterAuth() {
   refreshKeyBtn.style.display = 'inline-block';
   loginBtn.style.display = 'none';
   registerBtn.style.display = 'none';
-  // تغيير زر التسجيل لتسجيل الخروج (عملية بسيطة)
   registerBtn.textContent = 'تسجيل خروج';
-  registerBtn.onclick = () => {
+  registerBtn.onclick = function() {
     state.username = null; state.apikey = null; state.messages = [];
     apiKeyDisplay.style.display = 'none';
     refreshKeyBtn.style.display = 'none';
@@ -687,7 +683,7 @@ loginBtn.onclick = login;
 registerBtn.onclick = register;
 refreshKeyBtn.onclick = refreshKey;
 sendBtn.onclick = sendMessage;
-newChatBtn.onclick = () => {
+newChatBtn.onclick = function() {
   if (!state.apikey) { setStatus('سجل الدخول أولاً', 'error'); return; }
   state.currentConversationId = null;
   state.messages = [];
@@ -698,20 +694,18 @@ newChatBtn.onclick = () => {
 openPromptModalBtn.onclick = openPromptModal;
 savePromptBtn.onclick = savePrompt;
 
-messageInput.addEventListener('keydown', (e) => {
+messageInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     sendMessage();
   }
 });
 
-modelSelect.onchange = (e) => { state.model = e.target.value; };
+modelSelect.onchange = function(e) { state.model = e.target.value; };
 
 // تحميل النماذج عند بدء التشغيل
 loadModels();
 
-// محاولة استعادة الجلسة من localStorage (اختياري)
-// يمكنك تفعيلها لاحقاً
 console.log('AI Proxy ready!');
 </script>
 </body>
