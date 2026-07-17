@@ -9,6 +9,7 @@ GITHUB_BRANCH = "main"
 
 # المفتاح الشخصي لـ OpenRouter (سيتم إدخاله كـ Secret في لوحة التحكم)
 OPENROUTER_API_KEY = "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"
+GITHUB_TOKEN = "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"
 
 # إعدادات التطبيق
 DEFAULT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
