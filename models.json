@@ -1,6 +1,11 @@
 [
-  "openai/gpt-4o",
-  "openai/gpt-4o-mini",
-  "anthropic/claude-3.5-sonnet",
-  "meta-llama/llama-3.1-405b"
+"tencent/hy3:free",
+"nvidia/nemotron-3-ultra-550b-a55b:free",
+"poolside/laguna-m.1:free",
+"nvidia/nemotron-3-super-120b-a12b:free",
+"cohere/north-mini-code:free",
+"nvidia/nemotron-3-nano-30b-a3b:free",
+"tencent/hy3:free",
+"tencent/hy3:free",
+"tencent/hy3:free"
 ]
