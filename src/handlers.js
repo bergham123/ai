@@ -280,23 +280,28 @@ export async function handleGetConversation(request, env, conversationId) {
 }
 
 // ===== 7. حذف محادثة =====
-export async function handleDeleteConversation(request, env, conversationId) {
-  try {
-    const auth = await authenticateUser(env, request.headers.get("Authorization"));
-    if (auth.error) return jsonResponse({ error: auth.error }, 401);
-    const { userData } = auth;
-    const username = userData.username;
+// ===== حفظ المحادثة =====
+const chatFilePath = getChatFilePath(username, chatId);
+let existingChat = [];
+let existingSha = null; // <-- أضف هذا المتغير
 
-    const chatFilePath = getChatFilePath(username, conversationId);
-    const file = await githubGetFileRaw(env, chatFilePath);
-    if (!file.exists) return jsonResponse({ error: "Conversation not found" }, 404);
-
-    await githubDeleteFile(env, chatFilePath, file.sha, `Delete chat ${conversationId}`);
-    return jsonResponse({ ok: true });
-  } catch (err) {
-    return jsonResponse({ error: String(err.message || err) }, 500);
+if (!isNew) {
+  const existingFile = await githubGetFile(env, chatFilePath);
+  if (existingFile.exists && existingFile.content) {
+    try { existingChat = JSON.parse(existingFile.content); } catch (e) { existingChat = []; }
+    existingSha = existingFile.sha; // <-- خذ الـ sha من الملف الموجود
   }
 }
+
+// أضف الرسائل الجديدة
+const userMsg = messages[messages.length - 1];
+if (userMsg && userMsg.role === "user") {
+  existingChat.push(userMsg);
+}
+existingChat.push({ role: "assistant", content: assistantMessage.content });
+
+// استخدم existingSha (قد تكون null إذا كانت محادثة جديدة)
+await githubPutFile(env, chatFilePath, JSON.stringify(existingChat, null, 2), existingSha, `Update chat ${chatId}`);
 
 // ===== 8. جلب وحفظ الـ System Prompt =====
 export async function handleGetPrompt(request, env) {
