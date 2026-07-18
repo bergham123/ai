@@ -89,18 +89,19 @@ export async function handleGetModels(request, env) {
   try {
     const modelsFile = await githubGetFile(env, getModelsPath());
     if (!modelsFile.exists) {
+      // القائمة الافتراضية بالأسماء المخصصة الجديدة
       const defaultModels = [
-        { name: "محمد", id: "tencent/hy3:free" },
-        { name: "أحمد", id: "nvidia/nemotron-3-ultra-550b-a55b:free" },
-        { name: "علي", id: "poolside/laguna-m.1:free" },
-        { name: "فاطمة", id: "nvidia/nemotron-3-super-120b-a12b:free" },
-        { name: "خالد", id: "cohere/north-mini-code:free" },
-        { name: "سارة", id: "nvidia/nemotron-3-nano-30b-a3b:free" },
-        { name: "نور", id: "poolside/laguna-xs-2.1:free" },
-        { name: "يوسف", id: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free" },
-        { name: "ليلى", id: "openai/gpt-oss-20b:free" },
-        { name: "عمر", id: "nvidia/nemotron-nano-9b-v2:free" },
-        { name: "زينب", id: "google/gemma-4-31b-it:free" }
+        { name: "wld khadija", id: "tencent/hy3:free" },
+        { name: "hamada", id: "nvidia/nemotron-3-ultra-550b-a55b:free" },
+        { name: "obama", id: "poolside/laguna-m.1:free" },
+        { name: "ayoube", id: "nvidia/nemotron-3-super-120b-a12b:free" },
+        { name: "cohere", id: "cohere/north-mini-code:free" },
+        { name: "nemotron", id: "nvidia/nemotron-3-nano-30b-a3b:free" },
+        { name: "laguna", id: "poolside/laguna-xs-2.1:free" },
+        { name: "nvidia", id: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free" },
+        { name: "chatgpt-oss", id: "openai/gpt-oss-20b:free" },
+        { name: "waldkhadija-v-1", id: "nvidia/nemotron-nano-9b-v2:free" },
+        { name: "google-gemma", id: "google/gemma-4-31b-it:free" }
       ];
       await githubPutFile(env, getModelsPath(), JSON.stringify(defaultModels, null, 2), null, "Init models");
       return jsonResponse({ ok: true, models: defaultModels });
@@ -121,9 +122,9 @@ export async function handleGetModels(request, env) {
     } else {
       // إذا كانت فارغة، استخدم الافتراضية
       models = [
-        { name: "محمد", id: "tencent/hy3:free" },
-        { name: "أحمد", id: "nvidia/nemotron-3-ultra-550b-a55b:free" },
-        { name: "علي", id: "poolside/laguna-m.1:free" }
+        { name: "wld khadija", id: "tencent/hy3:free" },
+        { name: "hamada", id: "nvidia/nemotron-3-ultra-550b-a55b:free" },
+        { name: "obama", id: "poolside/laguna-m.1:free" }
       ];
     }
 
@@ -159,7 +160,7 @@ async function authenticateUser(env, authHeader) {
 }
 
 // ============================================
-// 4. نقطة نهاية الشات
+// 4. نقطة نهاية الشات (مع دعم الأسماء المخصصة)
 // ============================================
 export async function handleChat(request, env) {
   try {
@@ -171,6 +172,12 @@ export async function handleChat(request, env) {
     const { model, messages, conversation_id } = await request.json();
     if (!model) return jsonResponse({ error: "Model is required" }, 400);
     if (!messages || !Array.isArray(messages)) return jsonResponse({ error: "Messages array is required" }, 400);
+
+    // ===== حل اسم النموذج (دعم الأسماء المخصصة) =====
+    const resolvedModel = await resolveModelId(env, model);
+    if (!resolvedModel) {
+      return jsonResponse({ error: "Model not found. Please check the model name or ID." }, 400);
+    }
 
     // الحد اليومي
     const limit = parseInt(env.DAILY_REQUEST_LIMIT || "50");
@@ -210,7 +217,7 @@ export async function handleChat(request, env) {
 
     const openRouterMessages = [{ role: "system", content: systemPrompt }, ...messages];
 
-    // الاتصال بـ OpenRouter
+    // ===== الاتصال بـ OpenRouter باستخدام resolvedModel =====
     const openRouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -220,7 +227,7 @@ export async function handleChat(request, env) {
         "X-Title": "AI Proxy"
       },
       body: JSON.stringify({
-        model: model,
+        model: resolvedModel,   // <--- استخدم المعرف المُحلّل
         messages: openRouterMessages,
         stream: false
       })
@@ -393,4 +400,22 @@ export async function handleSavePrompt(request, env) {
   } catch (err) {
     return jsonResponse({ error: String(err.message || err) }, 500);
   }
+}
+
+// ============================================
+// 9. دالة مساعدة لحل اسم النموذج
+// ============================================
+async function resolveModelId(env, modelInput) {
+  // إذا كان الإدخال يحتوي على '/' فهو معرف فعلي
+  if (modelInput.includes('/')) {
+    return modelInput;
+  }
+  // البحث في قائمة النماذج عن اسم مخصص مطابق
+  const modelsFile = await githubGetFile(env, getModelsPath());
+  if (!modelsFile.exists) return null;
+  let models;
+  try { models = JSON.parse(modelsFile.content); } catch (e) { return null; }
+  if (!Array.isArray(models)) return null;
+  const found = models.find(m => m.name.toLowerCase() === modelInput.toLowerCase());
+  return found ? found.id : null;
 }
