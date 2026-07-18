@@ -199,7 +199,7 @@ export const DOCS_PAGE = `<!DOCTYPE html>
   <!-- ====== AUTH ====== -->
   <h2><i class="fas fa-key"></i> المصادقة</h2>
   <p>أرسل مفتاح API في رأس الطلب (Header) بالصيغة التالية:</p>
-  <div class="code-block">
+  <div class="code-block" dir="ltr">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
     <pre><code class="language-http">Authorization: Bearer &lt;api_key&gt;</code></pre>
   </div>
@@ -227,7 +227,7 @@ export const DOCS_PAGE = `<!DOCTYPE html>
   <!-- Chat -->
   <h3><span class="badge-method">POST</span> /api/chat</h3>
   <p>إرسال رسالة إلى النموذج. يمكنك استئناف محادثة بإرسال <code>conversation_id</code>.</p>
-  <div class="code-block">
+  <div class="code-block" dir="ltr">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
     <pre><code class="language-json">{
   "model": "wld khadija",
@@ -254,7 +254,7 @@ export const DOCS_PAGE = `<!DOCTYPE html>
   <h3><span class="badge-method">GET</span> /api/user/prompt</h3>
   <p>جلب التعليمات النظامية (System Prompt) الخاصة بك.</p>
   <h3><span class="badge-method">POST</span> /api/user/prompt</h3>
-  <div class="code-block">
+  <div class="code-block" dir="ltr">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
     <pre><code class="language-json">{ "system": "أنت خبير في البرمجة..." }</code></pre>
   </div>
@@ -265,7 +265,7 @@ export const DOCS_PAGE = `<!DOCTYPE html>
   <h2><i class="fas fa-terminal"></i> أمثلة الاستخدام</h2>
 
   <h3>cURL</h3>
-  <div class="code-block">
+  <div class="code-block" dir="ltr">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
     <pre><code class="language-bash">curl -X POST https://ai.velora.workers.dev/api/chat \\
   -H "Authorization: Bearer sk-737613b16d14476296ad9d850e00d7d5" \\
@@ -274,7 +274,7 @@ export const DOCS_PAGE = `<!DOCTYPE html>
   </div>
 
   <h3>Python</h3>
-  <div class="code-block">
+  <div class="code-block" dir="ltr">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
     <pre><code class="language-python">import requests
 
@@ -293,7 +293,7 @@ print(data["message"]["content"])</code></pre>
   </div>
 
   <h3>JavaScript (Browser / Node)</h3>
-  <div class="code-block">
+  <div class="code-block" dir="ltr">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
     <pre><code class="language-javascript">const url = "https://ai.velora.workers.dev/api/chat";
 const apiKey = "sk-737613b16d14476296ad9d850e00d7d5";
@@ -317,7 +317,7 @@ fetch(url, {
   </div>
 
   <h3>Node.js (axios)</h3>
-  <div class="code-block">
+  <div class="code-block" dir="ltr">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
     <pre><code class="language-javascript">const axios = require('axios');
 
