@@ -7,6 +7,7 @@ export const HTML_PAGE = `<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    /* (نفس الأنماط السابقة، احتفظ بها كما هي) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --bg-main: #0D1117;
@@ -28,7 +29,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
       height: 100vh;
       overflow: hidden;
     }
-    /* Sidebar */
     .sidebar {
       width: 280px;
       background: var(--bg-sidebar);
@@ -64,7 +64,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
       gap: 6px;
     }
     .new-chat-btn:hover { background: var(--accent-hover); transform: scale(1.02); }
-
     .conversation-list {
       flex: 1;
       overflow-y: auto;
@@ -96,8 +95,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
       border-radius: 4px;
     }
     .conv-item .del-btn:hover { color: #F85149; background: #2D1B1B; }
-
-    /* Main */
     .main {
       flex: 1;
       display: flex;
@@ -106,8 +103,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
       background: var(--bg-main);
       padding: 0 20px 20px 20px;
     }
-
-    /* Top Bar */
     .top-bar {
       display: flex;
       align-items: center;
@@ -147,7 +142,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
     .auth-area button:hover { background: var(--border-color); }
     .auth-area .btn-primary { background: var(--accent); color: #0D1117; border: none; }
     .auth-area .btn-primary:hover { background: var(--accent-hover); }
-
     .model-selector select {
       background: var(--input-bg);
       border: 1px solid var(--border-color);
@@ -159,7 +153,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
       min-width: 180px;
     }
     .model-selector select:focus { outline: none; border-color: var(--accent); }
-
     .api-key-display {
       background: var(--bg-card);
       padding: 4px 12px;
@@ -172,8 +165,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
       gap: 8px;
     }
     .api-key-display span { color: var(--text-main); font-family: monospace; }
-
-    /* Chat Container */
     .chat-container {
       flex: 1;
       overflow-y: auto;
@@ -203,8 +194,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
       border-bottom-right-radius: 4px;
     }
     .message .role-badge { font-size: 11px; opacity: 0.7; display: block; margin-bottom: 4px; }
-
-    /* Input Area */
     .input-area {
       display: flex;
       gap: 12px;
@@ -243,8 +232,6 @@ export const HTML_PAGE = `<!DOCTYPE html>
     }
     .input-area button:hover { background: var(--accent-hover); }
     .input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* Prompt Modal */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -278,14 +265,12 @@ export const HTML_PAGE = `<!DOCTYPE html>
       width: 100%;
     }
     .modal-box .btn-row { display: flex; gap: 12px; justify-content: flex-end; }
-
     .status-msg { font-size: 13px; color: var(--text-muted); padding: 4px 0; }
     .status-msg.error { color: #F85149; }
     .status-msg.success { color: #3FB950; }
   </style>
 </head>
 <body>
-
 <!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-header">
@@ -298,10 +283,8 @@ export const HTML_PAGE = `<!DOCTYPE html>
     </div>
   </div>
 </aside>
-
 <!-- Main -->
 <main class="main">
-  <!-- Top Bar -->
   <div class="top-bar">
     <div class="auth-area" id="authArea">
       <input type="text" id="usernameInput" placeholder="اسم المستخدم" dir="ltr">
@@ -319,22 +302,16 @@ export const HTML_PAGE = `<!DOCTYPE html>
       </select>
     </div>
   </div>
-
-  <!-- Chat Messages -->
   <div class="chat-container" id="chatContainer">
     <div style="color: var(--text-muted); text-align: center; padding: 40px; align-self: center;">
       <i class="fas fa-comment-dots" style="font-size: 32px; display: block; margin-bottom: 12px;"></i>
       أهلاً بك! سجل الدخول أو سجل جديد وابدأ المحادثة.
     </div>
   </div>
-
-  <!-- Input Area -->
   <div class="input-area">
     <textarea id="messageInput" rows="1" placeholder="اكتب رسالتك هنا..." dir="auto"></textarea>
     <button id="sendBtn"><i class="fas fa-paper-plane"></i> إرسال</button>
   </div>
-
-  <!-- Bottom Status & Tools -->
   <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px;">
     <span class="status-msg" id="statusMsg"></span>
     <button id="openPromptModalBtn" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px;">
@@ -342,8 +319,7 @@ export const HTML_PAGE = `<!DOCTYPE html>
     </button>
   </div>
 </main>
-
-<!-- Modal for System Prompt -->
+<!-- Modal -->
 <div class="modal-overlay" id="promptModal">
   <div class="modal-box">
     <h3 style="color: var(--accent);"><i class="fas fa-robot"></i> تعليمات النظام (System Prompt)</h3>
@@ -354,10 +330,9 @@ export const HTML_PAGE = `<!DOCTYPE html>
     </div>
   </div>
 </div>
-
 <script>
 // ===== الحالة العامة =====
-let state = {
+var state = {
   username: null,
   apikey: null,
   currentConversationId: null,
@@ -367,27 +342,28 @@ let state = {
 };
 
 // ===== العناصر =====
-const usernameInput = document.getElementById('usernameInput');
-const passwordInput = document.getElementById('passwordInput');
-const loginBtn = document.getElementById('loginBtn');
-const registerBtn = document.getElementById('registerBtn');
-const refreshKeyBtn = document.getElementById('refreshKeyBtn');
-const apiKeyDisplay = document.getElementById('apiKeyDisplay');
-const apiKeyText = document.getElementById('apiKeyText');
-const modelSelect = document.getElementById('modelSelect');
-const chatContainer = document.getElementById('chatContainer');
-const messageInput = document.getElementById('messageInput');
-const sendBtn = document.getElementById('sendBtn');
-const statusMsg = document.getElementById('statusMsg');
-const conversationList = document.getElementById('conversationList');
-const newChatBtn = document.getElementById('newChatBtn');
-const promptModal = document.getElementById('promptModal');
-const promptTextarea = document.getElementById('promptTextarea');
-const savePromptBtn = document.getElementById('savePromptBtn');
-const openPromptModalBtn = document.getElementById('openPromptModalBtn');
+var usernameInput = document.getElementById('usernameInput');
+var passwordInput = document.getElementById('passwordInput');
+var loginBtn = document.getElementById('loginBtn');
+var registerBtn = document.getElementById('registerBtn');
+var refreshKeyBtn = document.getElementById('refreshKeyBtn');
+var apiKeyDisplay = document.getElementById('apiKeyDisplay');
+var apiKeyText = document.getElementById('apiKeyText');
+var modelSelect = document.getElementById('modelSelect');
+var chatContainer = document.getElementById('chatContainer');
+var messageInput = document.getElementById('messageInput');
+var sendBtn = document.getElementById('sendBtn');
+var statusMsg = document.getElementById('statusMsg');
+var conversationList = document.getElementById('conversationList');
+var newChatBtn = document.getElementById('newChatBtn');
+var promptModal = document.getElementById('promptModal');
+var promptTextarea = document.getElementById('promptTextarea');
+var savePromptBtn = document.getElementById('savePromptBtn');
+var openPromptModalBtn = document.getElementById('openPromptModalBtn');
 
 // ===== دوال مساعدة =====
-function setStatus(msg, type = '') {
+function setStatus(msg, type) {
+  if (typeof type === 'undefined') type = '';
   statusMsg.textContent = msg;
   statusMsg.className = 'status-msg ' + type;
 }
@@ -401,26 +377,31 @@ function renderMessages() {
     chatContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 40px; align-self: center;"><i class="fas fa-comment-dots" style="font-size: 32px; display: block; margin-bottom: 12px;"></i>لا توجد رسائل. ابدأ المحادثة!</div>';
     return;
   }
-  // استخدام map مع تعريف isUser داخل كل تكرار
-  chatContainer.innerHTML = state.messages.map(msg => {
-    const isUser = (msg.role === 'user');
-    return '<div class="message ' + (isUser ? 'user' : 'assistant') + '">' +
+  var html = '';
+  for (var i = 0; i < state.messages.length; i++) {
+    var msg = state.messages[i];
+    var isUser = (msg.role === 'user');
+    html += '<div class="message ' + (isUser ? 'user' : 'assistant') + '">' +
       '<span class="role-badge">' + (isUser ? '🧑 أنت' : '🤖 المساعد') + '</span>' +
       msg.content +
       '</div>';
-  }).join('');
+  }
+  chatContainer.innerHTML = html;
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 // ===== جلب النماذج =====
 async function loadModels() {
   try {
-    const res = await fetch('/api/models');
-    const data = await res.json();
+    var res = await fetch('/api/models');
+    var data = await res.json();
     if (data.ok) {
-      modelSelect.innerHTML = data.models.map(m => 
-        `<option value="${m.id}">${m.name}</option>`
-      ).join('');
+      var optionsHtml = '';
+      for (var i = 0; i < data.models.length; i++) {
+        var m = data.models[i];
+        optionsHtml += '<option value="' + m.id + '">' + m.name + '</option>';
+      }
+      modelSelect.innerHTML = optionsHtml;
       if (data.models.length > 0) {
         state.model = data.models[0].id;
       }
@@ -432,37 +413,42 @@ async function loadModels() {
 async function loadConversations() {
   if (!state.apikey) return;
   try {
-    const res = await fetch('/api/conversations', { headers: { 'Authorization': getAuthHeader() } });
-    const data = await res.json();
+    var res = await fetch('/api/conversations', { headers: { 'Authorization': getAuthHeader() } });
+    var data = await res.json();
     if (data.ok) {
       if (data.conversations.length === 0) {
         conversationList.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 20px; font-size: 14px;">لا توجد محادثات. ابدأ محادثة جديدة!</div>';
         return;
       }
-      conversationList.innerHTML = data.conversations.map(conv => {
-        return '<div class="conv-item" data-id="' + conv.id + '">' +
+      var html = '';
+      for (var i = 0; i < data.conversations.length; i++) {
+        var conv = data.conversations[i];
+        html += '<div class="conv-item" data-id="' + conv.id + '">' +
           '<span>' + conv.id.replace('conv_', '').slice(0, 12) + '</span>' +
           '<button class="del-btn" data-id="' + conv.id + '"><i class="fas fa-trash"></i></button>' +
           '</div>';
-      }).join('');
+      }
+      conversationList.innerHTML = html;
 
       // إضافة مستمعات النقر
-      document.querySelectorAll('.conv-item').forEach(el => {
+      var items = document.querySelectorAll('.conv-item');
+      for (var j = 0; j < items.length; j++) {
+        var el = items[j];
         el.addEventListener('click', function(e) {
           if (e.target.closest('.del-btn')) return;
-          const id = this.dataset.id;
+          var id = this.dataset.id;
           loadConversation(id);
         });
-        const delBtn = el.querySelector('.del-btn');
+        var delBtn = el.querySelector('.del-btn');
         if (delBtn) {
           delBtn.addEventListener('click', async function(e) {
             e.stopPropagation();
-            const id = this.dataset.id;
+            var id = this.dataset.id;
             if (!confirm('حذف هذه المحادثة؟')) return;
             try {
-              const res = await fetch('/api/conversation/' + id, { method: 'DELETE', headers: { 'Authorization': getAuthHeader() } });
-              const data = await res.json();
-              if (data.ok) {
+              var resDel = await fetch('/api/conversation/' + id, { method: 'DELETE', headers: { 'Authorization': getAuthHeader() } });
+              var dataDel = await resDel.json();
+              if (dataDel.ok) {
                 setStatus('تم الحذف', 'success');
                 loadConversations();
                 if (state.currentConversationId === id) {
@@ -470,11 +456,11 @@ async function loadConversations() {
                   state.messages = [];
                   renderMessages();
                 }
-              } else { setStatus('خطأ: ' + data.error, 'error'); }
+              } else { setStatus('خطأ: ' + dataDel.error, 'error'); }
             } catch (err) { setStatus('خطأ: ' + err.message, 'error'); }
           });
         }
-      });
+      }
     }
   } catch (e) { setStatus('خطأ في جلب المحادثات: ' + e.message, 'error'); }
 }
@@ -483,15 +469,15 @@ async function loadConversations() {
 async function loadConversation(id) {
   if (!state.apikey) return;
   try {
-    const res = await fetch('/api/conversation/' + id, { headers: { 'Authorization': getAuthHeader() } });
-    const data = await res.json();
+    var res = await fetch('/api/conversation/' + id, { headers: { 'Authorization': getAuthHeader() } });
+    var data = await res.json();
     if (data.ok) {
       state.currentConversationId = data.conversation_id;
       state.messages = data.messages || [];
       renderMessages();
-      // تمييز العنصر النشط
-      document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
-      const activeEl = document.querySelector('.conv-item[data-id="' + id + '"]');
+      var items = document.querySelectorAll('.conv-item');
+      for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+      var activeEl = document.querySelector('.conv-item[data-id="' + id + '"]');
       if (activeEl) activeEl.classList.add('active');
       setStatus('تم تحميل المحادثة', 'success');
     } else {
@@ -503,12 +489,11 @@ async function loadConversation(id) {
 // ===== إرسال رسالة =====
 async function sendMessage() {
   if (state.isLoading) return;
-  const text = messageInput.value.trim();
+  var text = messageInput.value.trim();
   if (!text) return;
   if (!state.apikey) { setStatus('الرجاء تسجيل الدخول أولاً', 'error'); return; }
   if (!state.model) { setStatus('الرجاء اختيار نموذج', 'error'); return; }
 
-  // إضافة رسالة المستخدم محلياً
   state.messages.push({ role: 'user', content: text });
   renderMessages();
   messageInput.value = '';
@@ -517,22 +502,22 @@ async function sendMessage() {
   sendBtn.disabled = true;
 
   try {
-    const payload = {
+    var payload = {
       model: state.model,
-      messages: state.messages.filter(m => m.role !== 'system'),
+      messages: state.messages.filter(function(m) { return m.role !== 'system'; }),
       conversation_id: state.currentConversationId || undefined
     };
 
-    const res = await fetch('/api/chat', {
+    var res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': getAuthHeader()
       },
       body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
+    var data = await res.json();
     if (data.ok) {
       if (data.conversation_id && !state.currentConversationId) {
         state.currentConversationId = data.conversation_id;
@@ -555,16 +540,16 @@ async function sendMessage() {
 
 // ===== المصادقة =====
 async function login() {
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
+  var username = usernameInput.value.trim();
+  var password = passwordInput.value.trim();
   if (!username || !password) { setStatus('املأ جميع الحقول', 'error'); return; }
   try {
-    const res = await fetch('/api/auth/login', {
+    var res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: username, password: password })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (data.ok) {
       state.username = data.username;
       state.apikey = data.apikey;
@@ -580,16 +565,16 @@ async function login() {
 }
 
 async function register() {
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
+  var username = usernameInput.value.trim();
+  var password = passwordInput.value.trim();
   if (!username || !password) { setStatus('املأ جميع الحقول', 'error'); return; }
   try {
-    const res = await fetch('/api/auth/register', {
+    var res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: username, password: password })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (data.ok) {
       state.username = data.username;
       state.apikey = data.apikey;
@@ -605,16 +590,16 @@ async function register() {
 }
 
 async function refreshKey() {
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
+  var username = usernameInput.value.trim();
+  var password = passwordInput.value.trim();
   if (!username || !password) { setStatus('أدخل اسم المستخدم وكلمة المرور لتجديد المفتاح', 'error'); return; }
   try {
-    const res = await fetch('/api/auth/refresh-key', {
+    var res = await fetch('/api/auth/refresh-key', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: username, password: password })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (data.ok) {
       state.apikey = data.apikey;
       apiKeyText.textContent = state.apikey;
@@ -649,8 +634,8 @@ function updateUIAfterAuth() {
 async function loadPrompt() {
   if (!state.apikey) return;
   try {
-    const res = await fetch('/api/user/prompt', { headers: { 'Authorization': getAuthHeader() } });
-    const data = await res.json();
+    var res = await fetch('/api/user/prompt', { headers: { 'Authorization': getAuthHeader() } });
+    var data = await res.json();
     if (data.ok) {
       promptTextarea.value = data.system || '';
     }
@@ -660,12 +645,12 @@ async function loadPrompt() {
 async function savePrompt() {
   if (!state.apikey) { setStatus('الرجاء تسجيل الدخول', 'error'); return; }
   try {
-    const res = await fetch('/api/user/prompt', {
+    var res = await fetch('/api/user/prompt', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': getAuthHeader() },
       body: JSON.stringify({ system: promptTextarea.value })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (data.ok) {
       setStatus('تم حفظ التعليمات ✓', 'success');
       closePromptModal();
@@ -693,7 +678,8 @@ newChatBtn.onclick = function() {
   state.messages = [];
   renderMessages();
   setStatus('محادثة جديدة', 'success');
-  document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+  var items = document.querySelectorAll('.conv-item');
+  for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
 };
 openPromptModalBtn.onclick = openPromptModal;
 savePromptBtn.onclick = savePrompt;
@@ -705,9 +691,8 @@ messageInput.addEventListener('keydown', function(e) {
   }
 });
 
-modelSelect.onchange = function(e) { 
-  state.model = e.target.value; // هذا المعرف الفعلي
-};
+modelSelect.onchange = function(e) { state.model = e.target.value; };
+
 // تحميل النماذج عند بدء التشغيل
 loadModels();
 
