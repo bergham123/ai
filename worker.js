@@ -1,5 +1,6 @@
-// worker.js - المدخل الرئيسي مع دعم CORS
+// worker.js - المدخل الرئيسي مع دعم CORS وصفحة التوثيق
 import { HTML_PAGE } from './src/html.js';
+import { DOCS_PAGE } from './src/docs.js';  // <--- استيراد صفحة التوثيق
 
 import {
   handleRegister,
@@ -16,22 +17,18 @@ import {
 
 // ===== دالة مساعدة لإضافة رؤوس CORS إلى الردود =====
 function addCorsHeaders(response) {
-  // إذا كان response هو كائن Response
   if (response instanceof Response) {
     const newHeaders = new Headers(response.headers);
     newHeaders.set('Access-Control-Allow-Origin', '*');
     newHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     newHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     newHeaders.set('Access-Control-Max-Age', '86400');
-    
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
       headers: newHeaders
     });
   }
-  
-  // إذا كان response هو كائن JavaScript (غير Response)
   const body = typeof response === 'string' ? response : JSON.stringify(response);
   return new Response(body, {
     status: 200,
@@ -64,7 +61,17 @@ export default {
       });
     }
 
-    // ===== الصفحة الرئيسية =====
+    // ===== صفحة التوثيق =====
+    if (path === "/docs" && method === "GET") {
+      return new Response(DOCS_PAGE, {
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Access-Control-Allow-Origin": "*"
+        }
+      });
+    }
+
+    // ===== الصفحة الرئيسية (الواجهة) =====
     if (path === "/" && method === "GET") {
       return new Response(HTML_PAGE, {
         headers: {
@@ -74,7 +81,7 @@ export default {
       });
     }
 
-    // ===== المصادقة =====
+    // ===== باقي نقاط النهاية (API) =====
     if (path === "/api/auth/register" && method === "POST") {
       const result = await handleRegister(request, env);
       return addCorsHeaders(result);
@@ -87,26 +94,18 @@ export default {
       const result = await handleRefreshKey(request, env);
       return addCorsHeaders(result);
     }
-
-    // ===== النماذج =====
     if (path === "/api/models" && method === "GET") {
       const result = await handleGetModels(request, env);
       return addCorsHeaders(result);
     }
-
-    // ===== الشات =====
     if (path === "/api/chat" && method === "POST") {
       const result = await handleChat(request, env);
       return addCorsHeaders(result);
     }
-
-    // ===== المحادثات =====
     if (path === "/api/conversations" && method === "GET") {
       const result = await handleListConversations(request, env);
       return addCorsHeaders(result);
     }
-
-    // ===== المسارات الديناميكية للمحادثات =====
     if (path.startsWith("/api/conversation/")) {
       const parts = path.split('/');
       const id = parts[parts.length - 1];
@@ -119,8 +118,6 @@ export default {
         return addCorsHeaders(result);
       }
     }
-
-    // ===== الـ System Prompt =====
     if (path === "/api/user/prompt" && method === "GET") {
       const result = await handleGetPrompt(request, env);
       return addCorsHeaders(result);
@@ -130,7 +127,6 @@ export default {
       return addCorsHeaders(result);
     }
 
-    // ===== إذا لم يجد أي مسار =====
     return new Response("Not found", {
       status: 404,
       headers: {
