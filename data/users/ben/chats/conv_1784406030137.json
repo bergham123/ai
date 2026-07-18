@@ -14,5 +14,13 @@
   {
     "role": "assistant",
     "content": "Wakha, fiha 😄 ach bghiti tendem fiha?"
+  },
+  {
+    "role": "user",
+    "content": "wach hamada zaml"
+  },
+  {
+    "role": "assistant",
+    "content": "Salam 😄 ma fhemtch 3la ch bghiti tqoul b \"hamada\"? Hiya ktrast lik chi 7aja? Wach baghiti chi code, chi شرح, wla ghir kajawb 3la chi سؤال? Qol liya bach n9ad n3awnek."
   }
 ]
