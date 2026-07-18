@@ -418,8 +418,12 @@ async function loadModels() {
     const res = await fetch('/api/models');
     const data = await res.json();
     if (data.ok) {
-      modelSelect.innerHTML = data.models.map(m => '<option value="' + m + '">' + m + '</option>').join('');
-      if (data.models.length > 0) state.model = data.models[0];
+      modelSelect.innerHTML = data.models.map(m => 
+        `<option value="${m.id}">${m.name}</option>`
+      ).join('');
+      if (data.models.length > 0) {
+        state.model = data.models[0].id;
+      }
     }
   } catch (e) { console.error('Models load error', e); }
 }
@@ -701,8 +705,9 @@ messageInput.addEventListener('keydown', function(e) {
   }
 });
 
-modelSelect.onchange = function(e) { state.model = e.target.value; };
-
+modelSelect.onchange = function(e) { 
+  state.model = e.target.value; // هذا المعرف الفعلي
+};
 // تحميل النماذج عند بدء التشغيل
 loadModels();
 
