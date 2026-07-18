@@ -1,4 +1,3 @@
-// src/docs.js
 export const DOCS_PAGE = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -268,9 +267,9 @@ export const DOCS_PAGE = `<!DOCTYPE html>
   <h3>cURL</h3>
   <div class="code-block">
     <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> نسخ</button>
-    <pre><code class="language-bash">curl -X POST https://ai.velora.workers.dev/api/chat \
-  -H "Authorization: Bearer sk-737613b16d14476296ad9d850e00d7d5" \
-  -H "Content-Type: application/json" \
+    <pre><code class="language-bash">curl -X POST https://ai.velora.workers.dev/api/chat \\
+  -H "Authorization: Bearer sk-737613b16d14476296ad9d850e00d7d5" \\
+  -H "Content-Type: application/json" \\
   -d '{"model":"wld khadija","messages":[{"role":"user","content":"مرحباً"}]}'</code></pre>
   </div>
 
@@ -302,7 +301,7 @@ const apiKey = "sk-737613b16d14476296ad9d850e00d7d5";
 fetch(url, {
   method: "POST",
   headers: {
-    "Authorization": `Bearer ${apiKey}`,
+    "Authorization": "Bearer " + apiKey,
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
@@ -327,7 +326,7 @@ axios.post('https://ai.velora.workers.dev/api/chat', {
   messages: [{ role: "user", content: "مرحباً" }]
 }, {
   headers: {
-    Authorization: 'Bearer sk-737613b16d14476296ad9d850e00d7d5',
+    Authorization: 'Bearer ' + apiKey,
     'Content-Type': 'application/json'
   }
 })
@@ -368,24 +367,24 @@ axios.post('https://ai.velora.workers.dev/api/chat', {
 <!-- ====== SCRIPTS ====== -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('pre code').forEach((block) => {
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('pre code').forEach(function(block) {
       hljs.highlightElement(block);
     });
   });
 
   function copyCode(btn) {
-    const pre = btn.parentElement.querySelector('pre');
-    const code = pre.innerText;
+    var pre = btn.parentElement.querySelector('pre');
+    var code = pre.innerText;
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(code).then(() => {
+      navigator.clipboard.writeText(code).then(function() {
         btn.classList.add('copied');
         btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
-        setTimeout(() => {
+        setTimeout(function() {
           btn.classList.remove('copied');
           btn.innerHTML = '<i class="fas fa-copy"></i> نسخ';
         }, 2000);
-      }).catch(() => {
+      }).catch(function() {
         fallbackCopy(code, btn);
       });
     } else {
@@ -394,7 +393,7 @@ axios.post('https://ai.velora.workers.dev/api/chat', {
   }
 
   function fallbackCopy(text, btn) {
-    const textarea = document.createElement('textarea');
+    var textarea = document.createElement('textarea');
     textarea.value = text;
     document.body.appendChild(textarea);
     textarea.select();
@@ -402,7 +401,7 @@ axios.post('https://ai.velora.workers.dev/api/chat', {
       document.execCommand('copy');
       btn.classList.add('copied');
       btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
-      setTimeout(() => {
+      setTimeout(function() {
         btn.classList.remove('copied');
         btn.innerHTML = '<i class="fas fa-copy"></i> نسخ';
       }, 2000);
