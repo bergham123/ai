@@ -29,9 +29,7 @@ export async function handleRegister(request, env) {
       lastResetDate: new Date().toISOString().split('T')[0]
     };
     
-    // استخدم `usersFile.sha` إذا كان الملف موجوداً، وإلا استخدم `null`
     await githubPutFile(env, getUsersPath(), JSON.stringify(users, null, 2), usersFile.sha, `Register user ${username}`);
-    
     await githubPutFile(env, getUserPromptPath(username), JSON.stringify({ system: "You are a helpful assistant." }), null, `Init prompt for ${username}`);
     
     return jsonResponse({ ok: true, username, apikey });
@@ -64,7 +62,6 @@ export async function handleRefreshKey(request, env) {
     const { username, password } = await request.json();
     if (!username || !password) return jsonResponse({ error: "username and password required" }, 400);
     
-    // جلب الملف للحصول على sha
     const usersFile = await githubGetFile(env, getUsersPath());
     if (!usersFile.exists) return jsonResponse({ error: "User not found" }, 404);
     const users = JSON.parse(usersFile.content);
@@ -99,7 +96,7 @@ export async function handleGetModels(request, env) {
   }
 }
 
-// ===== 3. دالة المصادقة المساعدة (تعيد كائن المستخدم مع sha) =====
+// ===== 3. دالة المصادقة المساعدة =====
 async function authenticateUser(env, authHeader) {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return { error: "Missing or invalid Authorization header. Use 'Bearer <apikey>'" };
@@ -134,12 +131,10 @@ export async function handleChat(request, env) {
     if (!model) return jsonResponse({ error: "Model is required" }, 400);
     if (!messages || !Array.isArray(messages)) return jsonResponse({ error: "Messages array is required" }, 400);
 
-    // الحد اليومي
     const limit = parseInt(env.DAILY_REQUEST_LIMIT || "50");
     const dailyCheck = checkDailyLimit(userData, limit);
     if (!dailyCheck.allowed) return jsonResponse({ error: dailyCheck.message }, 429);
 
-    // التحقق من عدد المحادثات
     const chatFolder = getUserChatsFolder(username);
     const listRes = await githubListFiles(env, chatFolder);
     const maxChats = parseInt(env.MAX_CHATS_PER_USER || "20");
@@ -166,7 +161,6 @@ export async function handleChat(request, env) {
 
     const openRouterMessages = [{ role: "system", content: systemPrompt }, ...messages];
 
-    // الاتصال بـ OpenRouter
     const openRouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -194,7 +188,6 @@ export async function handleChat(request, env) {
     }
 
     // ===== تحديث عداد المستخدم =====
-    // يجب إعادة جلب الملف للحصول على sha محدثة
     const updatedUsersFile = await githubGetFile(env, getUsersPath());
     let updatedUsers;
     try { updatedUsers = JSON.parse(updatedUsersFile.content); } catch (e) { updatedUsers = {}; }
@@ -202,18 +195,21 @@ export async function handleChat(request, env) {
       updatedUsers[username].dailyCount = (updatedUsers[username].dailyCount || 0) + 1;
       updatedUsers[username].lastResetDate = new Date().toISOString().split('T')[0];
     } else {
-      // حالياً المستخدم موجود، لكن في حالة عدم وجوده نضيفه
       updatedUsers[username] = { ...userData, dailyCount: 1 };
     }
     await githubPutFile(env, getUsersPath(), JSON.stringify(updatedUsers, null, 2), updatedUsersFile.sha, `Update count for ${username}`);
 
-    // حفظ المحادثة
+    // ===== حفظ المحادثة =====
     const chatFilePath = getChatFilePath(username, chatId);
     let existingChat = [];
+    let chatSha = null;
     if (!isNew) {
       const existingFile = await githubGetFile(env, chatFilePath);
-      if (existingFile.exists && existingFile.content) {
-        try { existingChat = JSON.parse(existingFile.content); } catch (e) { existingChat = []; }
+      if (existingFile.exists) {
+        chatSha = existingFile.sha;
+        if (existingFile.content) {
+          try { existingChat = JSON.parse(existingFile.content); } catch (e) { existingChat = []; }
+        }
       }
     }
     const userMsg = messages[messages.length - 1];
@@ -222,7 +218,8 @@ export async function handleChat(request, env) {
     }
     existingChat.push({ role: "assistant", content: assistantMessage.content });
 
-    await githubPutFile(env, chatFilePath, JSON.stringify(existingChat, null, 2), null, `Update chat ${chatId}`);
+    // إذا كان الملف غير موجود (isNew = true) نمرر sha = null، وإلا نمرر chatSha
+    await githubPutFile(env, chatFilePath, JSON.stringify(existingChat, null, 2), chatSha, `Update chat ${chatId}`);
 
     return jsonResponse({
       ok: true,
