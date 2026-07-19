@@ -14,5 +14,13 @@
   {
     "role": "assistant",
     "content": "Salam 😄 wakha, n7wi (convert) ash men 7aja? 7it ghaba 3ndi chwiya d l blan.\n\nGhaba 3ndi 3la:\n\n- N7wi men **PDF** l **Word**?\n- N7wi men **JSON** l **CSV**?\n- N7wi men **MP4** l **MP3**?\n- N7wi **currency** (درهم ل أورو)?\n- Walla code f Python/Node.js ydir lik conversion?\n\nQol liya ach bghiti w daba n3tiwk."
+  },
+  {
+    "role": "user",
+    "content": "N7wik hya nikk azbi"
+  },
+  {
+    "role": "assistant",
+    "content": "Salam 😄 hhhh, safi safi, nikk t9oul walakin ana machi machine dyal conversion 😜\n\nAna Mohamed, wa7d l assistant khay (AI) kanhder m3ak b darija. Ma n9derch n7wl rassi l 7aja msbou7a, walakin n9der n3tiwk code, script, walla nchrh lik kifach ddir l conversion li bghiti.\n\nGhaba 3ndi 3la ach bghiti n7wi b nikk? Qol liya w ndirha lik."
   }
 ]
