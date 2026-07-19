@@ -6,5 +6,13 @@
   {
     "role": "assistant",
     "content": "Salam 😄 labas? Ach bghiti ndir lik lyoum?"
+  },
+  {
+    "role": "user",
+    "content": "ما اسمي انا"
+  },
+  {
+    "role": "assistant",
+    "content": "Achraf 👋 salam 3lik, nta 3arf ach khbar?"
   }
 ]
