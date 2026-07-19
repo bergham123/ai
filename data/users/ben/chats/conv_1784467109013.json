@@ -6,5 +6,13 @@
   {
     "role": "assistant",
     "content": "Salam 😄 labas, mzyan bssa7a. Nta 3arf, ana Mohamed. Ach bghiti ndir lik?"
+  },
+  {
+    "role": "user",
+    "content": "3tini n7wi"
+  },
+  {
+    "role": "assistant",
+    "content": "Salam 😄 wakha, n7wi (convert) ash men 7aja? 7it ghaba 3ndi chwiya d l blan.\n\nGhaba 3ndi 3la:\n\n- N7wi men **PDF** l **Word**?\n- N7wi men **JSON** l **CSV**?\n- N7wi men **MP4** l **MP3**?\n- N7wi **currency** (درهم ل أورو)?\n- Walla code f Python/Node.js ydir lik conversion?\n\nQol liya ach bghiti w daba n3tiwk."
   }
 ]
