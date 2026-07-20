@@ -19,5 +19,12 @@
     "createdAt": "2026-07-17T19:12:49.007Z",
     "dailyCount": 36,
     "lastResetDate": "2026-07-20"
+  },
+  "salam": {
+    "password": "salam",
+    "apikey": "sk-e59b01a8ad9a419f9dca9b702dbde172",
+    "createdAt": "2026-07-20T19:16:47.267Z",
+    "dailyCount": 0,
+    "lastResetDate": "2026-07-20"
   }
 }
