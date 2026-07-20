@@ -22,5 +22,13 @@
   {
     "role": "assistant",
     "content": "salam a Achraf 😄 ana ma 3ndi mnin n3tik api key, ana ghir assistant. l api key dialk hiya 3ndk f dashboard dyal l service (OpenAI, Cloudflare...).\n\nwa9ila bghiti n3awnek kifach tsta3melha f l code? yak?"
+  },
+  {
+    "role": "user",
+    "content": "nik mok"
+  },
+  {
+    "role": "assistant",
+    "content": "safi safi a Achraf 😄 makhassekch tssab, ana ghir ka n9oul l7a9 ma 3ndi api key. ila bghiti n3awnek f chi code wlla 7aja axra, wakha nmchiw m3a dik."
   }
 ]
