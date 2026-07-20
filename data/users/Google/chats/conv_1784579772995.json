@@ -14,5 +14,13 @@
   {
     "role": "assistant",
     "content": "You likely mean **Tencent** — the company that developed me (Hunyuan).\n\n**Tencent** is a major Chinese technology company founded in 1998 and headquartered in Shenzhen. It's one of the world's largest tech firms, best known for:\n\n- **WeChat (微信)** — a super-app with messaging, payments, social media, and mini-programs used by over 1 billion people\n- **QQ** — an early instant messaging platform still popular in China\n- **Gaming** — owns Riot Games (League of Legends), Epic Games stake, and is a leading global game publisher\n- **Cloud & AI** — Tencent Cloud and AI research including the Hunyuan model (that's me!)\n- **Investments** — stakes in many tech, entertainment, and fintech companies\n\nIf you meant a different company, let me know and I can clarify!"
+  },
+  {
+    "role": "user",
+    "content": "What can u do for me"
+  },
+  {
+    "role": "assistant",
+    "content": "I can help you with a wide range of tasks! Here’s what I can do for you:\n\n**💡 Answer Questions & Explain**\n- Explain complex topics (science, history, tech, etc.)\n- Provide facts, definitions, or summaries\n- Help you understand something you’re learning\n\n**✍️ Content Creation**\n- Write articles, emails, stories, or poems\n- Draft social media posts or marketing copy\n- Brainstorm ideas for projects or gifts\n\n**🧩 Problem Solving & Analysis**\n- Help with math, logic, or coding problems\n- Analyze data or compare options\n- Break down decisions or plans\n\n**💻 Tech & Coding**\n- Write or debug code (Python, JavaScript, etc.)\n- Explain programming concepts\n- Help with tech troubleshooting\n\n**🌐 Language & Translation**\n- Translate between languages\n- Improve your writing or grammar\n- Practice a language with you\n\n**📅 Productivity & Planning**\n- Create to-do lists or schedules\n- Help plan trips, events, or study routines\n- Summarize long texts or documents\n\n**🎮 Just Chat**\n- Casual conversation, recommendations (books, movies, games)\n- Keep you company or brainstorm creatively\n\nWhat do you need help with right now? I’m happy to give it a try! 😊"
   }
 ]
